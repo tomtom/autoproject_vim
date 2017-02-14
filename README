@@ -1,0 +1,39 @@
+This plugin tries to detect the current buffer's working directory upon 
+creating a buffer or reading a file into a buffer. It does so by 
+searching for certain files that typically define a project, like 
+Makefile, setup.py etc. -- see |g:autoproject#cd#markers| for a full 
+list. If no special file is found, the buffer's directory is used.
+
+After the working directory is determined, it checks whether there is a 
+file `project.vim` (see also |g:autoproject#projectrc#filenames|). If 
+the file exists, it gets loaded. This file typically sets 
+project-related settings and variables, i.e., you have to use 
+|:setlocal| (instead of :set) and set |b:| variables.
+
+How to use this plugin~
+- Load a file ... done
+- Report wrongly detected project directories to the plugin author
+
+-----------------------------------------------------------------------
+Install~
+
+Either use the zip archive:
+    - Download the zip archive
+    - Extract it to `~/.vim/pack/tml/start/autoproject`
+
+or install from github:
+    - Start a terminal
+    - Change the working directory to `~/.vim/pack/tml/start/`
+    - Type: `git clone https://github.com/tomtom/autoproject_vim`
+
+NOTE: If you don't want to run this plugin on startup, use `~/.vim/pack/tml/opt/`.
+NOTE: On Windows, ~/.vim might be ~/vimfiles. Please see 'runtimepath' for 
+details.
+
+
+
+
+License: GPLv3 or later
+Install: See http://github.com/tomtom/vimtlib/blob/master/INSTALL.TXT
+See http://github.com/tomtom for related plugins.
+
