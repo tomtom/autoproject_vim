@@ -1,0 +1,9 @@
+{
+    "name" : "autoproject",
+    "version" : "dev",
+    "author" : "Tom Link <micathom at gmail com>",
+    "maintainer" : "Tom Link <micathom at gmail com>",
+    "repository" : {"type": "git", "url": "git://github.com/tomtom/autoproject_vim.git"},
+    "dependencies" : {},
+    "description" : "Set a buffer's working directory and project settings"
+}
