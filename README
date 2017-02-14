@@ -14,6 +14,10 @@ How to use this plugin~
 - Load a file ... done
 - Report wrongly detected project directories to the plugin author
 
+There are various similar plugins around that try to determine a buffer's 
+project root directory. The autoproject plugin is a mix of those and 
+plugins like localvimrc (and similar plugins).
+
 -----------------------------------------------------------------------
 Install~
 
