@@ -1,8 +1,8 @@
 " @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-02-11
-" @Revision:    153
+" @Last Change: 2017-03-02
+" @Revision:    173
 
 if exists(':Tlibtrace') != 2
     command! -nargs=+ -bang Tlibtrace :
@@ -19,12 +19,12 @@ if !exists('g:autoproject#cd#markers')
     "   match ..... One of 'rx', 'glob', 'fixed' (default)
     "   use ....... One of 'path', 'basename' (default)
     "   fallback .. 0 (default) or 1
-    " Entries from |g:autoproject#projectrc#filenames| are automaticall 
+    " Entries from |g:autoproject#projectrc#buffer_config| are automaticall 
     " added.
     "
     " The variable g:autoproject#cd#markers_user will be concatenated to 
     " this variable.
-    " :read: let g:tlib#project#file_markers = {...}   "{{{2
+    " :read: let g:autoproject#cd#markers = {...}   "{{{2
     let g:autoproject#cd#markers = {
                 \ '.cvs': {},
                 \ '.git': {},
@@ -35,7 +35,10 @@ if !exists('g:autoproject#cd#markers')
                 \ '.iml': {},
                 \ 'build.gradle': {},
                 \ 'project.json': {},
+                \ '.projectvim': {},
+                \ '_projectvim': {},
                 \ 'project.vim': {},
+                \ '.lvimrc': {},
                 \ 'setup.py': {},
                 \ 'setup.rb': {},
                 \ '[\/]pack[\/][^\/]\+[\/]\%(start\|opt\)[\/][^\/]\+$': {'match': 'rx', 'use': 'path'},
@@ -45,7 +48,7 @@ endif
 if exists('g:autoproject#cd#markers_user')
     let g:autoproject#cd#markers = extend(g:autoproject#cd#markers, g:autoproject#cd#markers_user)
 endif
-for s:fname in g:autoproject#projectrc#filenames
+for s:fname in g:autoproject#projectrc#buffer_config
     let g:autoproject#cd#markers[s:fname] = {}
 endfor
 unlet! s:fname
@@ -78,6 +81,8 @@ function! autoproject#cd#ChangeDir(filename, ...) abort "{{{3
     let cmd = a:0 >= 1 ? a:1 : g:autoproject#cd#cmd
     Tlibtrace 'autoproject', cmd
     let dir = fnamemodify(a:filename, ':p:h')
+    let [reg_cname, reg] = autoproject#list#GetReg()
+    Tlibtrace 'autoproject', reg
     if getbufvar(a:filename, 'autoproject_use_bufdir', 0) || (!empty(g:autoproject#cd#buffer_use_bufdir_rx) && a:filename =~ g:autoproject#cd#buffer_use_bufdir_rx)
         let rootdir = dir
         let rootname = 'bufdir'
@@ -92,31 +97,39 @@ function! autoproject#cd#ChangeDir(filename, ...) abort "{{{3
         while dir !~ '^\%(/\|\%([a-zA-Z]\+:\)\)\?$'
             Tlibtrace 'autoproject', dir
             try
-                let files = globpath(dir, "*", 0, 1) + filter(globpath(dir, ".*", 0, 1), {i, v -> v !~# '\%([\/]\|^\)\?\.\+$'})
-                Tlibtrace 'autoproject', files
-                for file in files
-                    let basename = matchstr(file, '[^\/]\+$')
-                    " Tlibtrace 'autoproject', basename
-                    for [name, mdef] in markers
-                        " Tlibtrace 'autoproject', name, mdef
-                        let item = get(mdef, 'use', 'basename') ==# 'path' ? dir : basename
-                        " Tlibtrace 'autoproject', item
-                        if s:Match(item, name, mdef)
-                            Tlibtrace 'autoproject', item, name
-                            if get(mdef, 'fallback', 0)
-                                if item != $HOME
-                                    let default = dir
-                                    Tlibtrace 'autoproject', 'fallback', default, item, basename, dir
+                let cdir = tlib#file#Canonic(dir)
+                Tlibtrace 'autoproject', cdir
+                if index(reg, cdir) != -1
+                    let rootname = '*reg*'
+                    let rootdir = dir
+                    break
+                else
+                    let files = globpath(dir, "*", 1, 1) + filter(globpath(dir, ".*", 1, 1), {i, v -> v !~# '\%([\/]\|^\)\?\.\+$'})
+                    Tlibtrace 'autoproject', files
+                    for file in files
+                        let basename = matchstr(file, '[^\/]\+$')
+                        " Tlibtrace 'autoproject', basename
+                        for [name, mdef] in markers
+                            " Tlibtrace 'autoproject', name, mdef
+                            let item = get(mdef, 'use', 'basename') ==# 'path' ? dir : basename
+                            " Tlibtrace 'autoproject', item
+                            if s:Match(item, name, mdef)
+                                Tlibtrace 'autoproject', item, name
+                                if get(mdef, 'fallback', 0)
+                                    if item != $HOME
+                                        let default = dir
+                                        Tlibtrace 'autoproject', 'fallback', default, item, basename, dir
+                                    endif
+                                else
+                                    let rootdir = dir
+                                    let rootname = name
+                                    Tlibtrace 'autoproject', 'rootdir', default
                                 endif
-                            else
-                                let rootdir = dir
-                                let rootname = name
-                                Tlibtrace 'autoproject', 'rootdir', default
+                                throw 'ok'
                             endif
-                            throw 'ok'
-                        endif
+                        endfor
                     endfor
-                endfor
+                endif
                 let dir = substitute(dir, '[\/][^\/]\+$', '', '')
             catch /ok/
                 break
@@ -142,7 +155,12 @@ function! autoproject#cd#ChangeDir(filename, ...) abort "{{{3
         Tlibtrace 'autoproject', cmd, rootdir, bufnr('%')
         let b:autoproject_lcd = rootname
         exec cmd fnameescape(rootdir)
-        call autoproject#projectrc#Load(rootdir)
+        call autoproject#projectrc#LoadBufferConfig(rootdir)
+        if rootname ==# '*reg*'
+            call autoproject#list#RegisterDir(rootdir)
+        else
+            call autoproject#list#RegisterNameDir(rootname, rootdir)
+        endif
     endif
 endf
 
