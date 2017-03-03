@@ -2,24 +2,41 @@
                 Author: Thomas Link, micathom AT gmail com?subject=vim
 
 This plugin tries to detect the current buffer's working directory upon 
-creating a buffer or reading a file into a buffer. It does so by 
-searching for certain files that typically define a project, like 
-Makefile, setup.py etc. -- see |g:autoproject#cd#markers| for a full 
-list. If no special file is found, the buffer's directory is used.
+creating a buffer or reading a file into a buffer. It does so by searching for 
+certain files that typically define a project, like Makefile, setup.py etc. -- 
+see |g:autoproject#cd#markers| for a full list. It the registers the project 
+root directory in a list. If no special file is found, the buffer's directory 
+is used.
 
-After the working directory is determined, it checks whether there is a 
-file `project.vim` (see also |g:autoproject#projectrc#filenames|). If 
-the file exists, it gets loaded. This file typically sets 
-project-related settings and variables, i.e., you have to use 
-|:setlocal| (instead of :set) and set |b:| variables.
+After the working directory is determined, it checks whether there is a file 
+`project.vim` or `.autoproject/buffer.vim` (see also 
+|g:autoproject#projectrc#buffer_conig|). If the file exists, it gets loaded. This 
+file typically sets project-related settings and variables, i.e., you have to 
+use |:setlocal| (instead of :set) and set |b:| variables.
 
-How to use this plugin~
+Features:~
+- Detect a files project root directory (see |g:autoproject#cd#markers|).
+- Load a project-specific vim configuration file (see 
+  |g:autoproject#projectrc#buffer_conig|).
+- Maintain a list of projects (i.e. project root directories). Use 
+  |:Autoprojectregister| to register an arbitrary directory. Use 
+  |:Autoprojectselect| to quickly open a file in a previously opened project. 
+  When a project is selected this way, the file `.autoproject/global.vim` (see 
+  |g:autoproject#projectrc#global_config|) is loaded if it exists.
+- Maintain project-specific sessions (see |g:autoproject_enable_sessions|, 
+  |:Autoprojectmksession|, and |:Autoprojectleavesession|).
+
+How to use this plugin:~
 - Load a file ... done
-- Report wrongly detected project directories to the plugin author
+    - Report wrongly detected project directories to the plugin author
+- Use |:Autoprojectselect| to switch to a project.
+- Use |:Autoprojectmksession| to create a session for the current project. 
+  Don't forget to use |:Autoprojectleavesession| to save changes to the session 
+  file when you're done.
 
-There are various similar plugins around that try to determine a buffer's 
-project root directory. The autoproject plugin is a mix of those and 
-plugins like localvimrc (and similar plugins).
+If you don't like this plugin, there are various similar plugins around that 
+try to determine a buffer's project root directory. The autoproject plugin is a 
+mix of those and plugins like localvimrc (and similar plugins).
 
 -----------------------------------------------------------------------
 Install~
@@ -33,18 +50,33 @@ or install from github:
     - Change the working directory to `~/.vim/pack/tml/start/`
     - Type: `git clone https://github.com/tomtom/autoproject_vim`
 
-NOTE: If you don't want to run this plugin on startup, use `~/.vim/pack/tml/opt/`.
+NOTE: If you don't want to run this plugin on startup, use 
+`~/.vim/pack/tml/opt/`.
+
 NOTE: On Windows, ~/.vim might be ~/vimfiles. Please see 'runtimepath' for 
 details.
+
+
+Requirements~
+
+This script requires tlib (vimscript #1863) to be installed -- see 
+https://github.com/tomtom/tlib_vim.
 
 ========================================================================
 Contents~
 
-        g:autoproject_enable_cd .............. |g:autoproject_enable_cd|
-        g:autoproject_map_edit ............... |g:autoproject_map_edit|
-        g:tlib#project#file_markers .......... |g:tlib#project#file_markers|
-        g:autoproject#projectrc#filenames .... |g:autoproject#projectrc#filenames|
-        g:autoproject#projectrc#sandbox ...... |g:autoproject#projectrc#sandbox|
+        g:autoproject_enable_cd ................. |g:autoproject_enable_cd|
+        g:autoproject_enable_sessions ........... |g:autoproject_enable_sessions|
+        g:autoproject_map_edit .................. |g:autoproject_map_edit|
+        g:autoproject_map_saveas ................ |g:autoproject_map_saveas|
+        :Autoprojectselect ...................... |:Autoprojectselect|
+        :Autoprojectregister .................... |:Autoprojectregister|
+        :Autoprojectmksession ................... |:Autoprojectmksession|
+        :Autoprojectleavesession ................ |:Autoprojectleavesession|
+        g:autoproject#cd#markers ................ |g:autoproject#cd#markers|
+        g:autoproject#projectrc#buffer_config ... |g:autoproject#projectrc#buffer_config|
+        g:autoproject#projectrc#global_config ... |g:autoproject#projectrc#global_config|
+        g:autoproject#projectrc#sandbox ......... |g:autoproject#projectrc#sandbox|
 
 
 ------------------------------------------------------------------------
@@ -53,20 +85,51 @@ Contents~
 g:autoproject_enable_cd        (default: !(&autochdir))
     If true, try to detect a file's project directory.
 
+                                                    *g:autoproject_enable_sessions*
+g:autoproject_enable_sessions  (default: 1)
+    If true, enable session handling.
+
                                                     *g:autoproject_map_edit*
 g:autoproject_map_edit         (default: '<Leader>:e')
     Map to invoke |:edit| with a `%:p:h/` argument.
 
+                                                    *g:autoproject_map_saveas*
+g:autoproject_map_saveas       (default: '<Leader>:s')
+    Map to invoke |:saveas| with a `%:p:h/` argument.
+
+                                                    *:Autoprojectselect*
+:Autoprojectselect[!]
+    Switch to a project previously detected by autoproject that has an 
+    acceptable project marker (see |g:file autoproject#list#accept_markers|).
+    If |g:autoproject_enable_sessions| is true, restore a previous 
+    session.
+
+    With the optional bang "!", leave the previous session.
+
+                                                    *:Autoprojectregister*
+:Autoprojectregister [DIR]
+    Register DIR or the current buffer's directory.
+
+                                                    *:Autoprojectmksession*
+:Autoprojectmksession [DIR]
+    Create a session for a working directory.
+    If no argument, a directory, is given, the current working 
+    directory (|getcwd()|) is used.
+
+                                                    *:Autoprojectleavesession*
+:Autoprojectleavesession
+    Leave a session. Update the session file. Close all buffers.
+
 
 ------------------------------------------------------------------------
                                                     *autoload/autoproject/cd.vim*
-                                                    *g:tlib#project#file_markers*
-g:tlib#project#file_markers    (default: {...})
+                                                    *g:autoproject#cd#markers*
+g:autoproject#cd#markers       (default: {...})
     Supported properties:
       match ..... One of 'rx', 'glob', 'fixed' (default)
       use ....... One of 'path', 'basename' (default)
       fallback .. 0 (default) or 1
-    Entries from |g:autoproject#projectrc#filenames| are automaticall 
+    Entries from |g:autoproject#projectrc#buffer_config| are automaticall 
     added.
 
     The variable g:autoproject#cd#markers_user will be concatenated to 
@@ -75,14 +138,20 @@ g:tlib#project#file_markers    (default: {...})
 
 ------------------------------------------------------------------------
                                                     *autoload/autoproject/projectrc.vim*
-                                                    *g:autoproject#projectrc#filenames*
-g:autoproject#projectrc#filenames (default: ['project.vim'])
-    A list of files for project-related settings. Only the first 
-    matching file will be loaded.
+                                                    *g:autoproject#projectrc#buffer_config*
+g:autoproject#projectrc#buffer_config (default: ['project.vim', '_projectvim/buffer.vim', '.projectvim/buffer.vim'])
+    A list of files for project-related buffer-local settings.
+    Only the first matching file will be loaded.
+
+                                                    *g:autoproject#projectrc#global_config*
+g:autoproject#projectrc#global_config (default: ['_projectvim/global.vim', '.projectvim/global.vim'])
+    A list of files for project-related settings. This file will be 
+    loaded when switching to a project via |:Autoprojectselect|.
+    Only the first matching file will be loaded.
 
                                                     *g:autoproject#projectrc#sandbox*
 g:autoproject#projectrc#sandbox (default: 1)
-    If true, evaluate a file from |g:autoproject#projectrc#filenames| 
+    If true, evaluate a file from |g:autoproject#projectrc#buffer_config| 
     in a |sandbox|.
 
 

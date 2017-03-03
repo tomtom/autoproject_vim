@@ -1,25 +1,42 @@
-*autoproject.txt*  Set a buffer's working directory and project settings
+*autoproject.txt*  Set buffer-local options, the working directory etc. specific to a project
                 Author: Thomas Link, micathom AT gmail com?subject=vim
 
 This plugin tries to detect the current buffer's working directory upon 
-creating a buffer or reading a file into a buffer. It does so by 
-searching for certain files that typically define a project, like 
-Makefile, setup.py etc. -- see |g:autoproject#cd#markers| for a full 
-list. If no special file is found, the buffer's directory is used.
+creating a buffer or reading a file into a buffer. It does so by searching for 
+certain files that typically define a project, like Makefile, setup.py etc. -- 
+see |g:autoproject#cd#markers| for a full list. It the registers the project 
+root directory in a list. If no special file is found, the buffer's directory 
+is used.
 
-After the working directory is determined, it checks whether there is a 
-file `project.vim` (see also |g:autoproject#projectrc#filenames|). If 
-the file exists, it gets loaded. This file typically sets 
-project-related settings and variables, i.e., you have to use 
-|:setlocal| (instead of :set) and set |b:| variables.
+After the working directory is determined, it checks whether there is a file 
+`project.vim` or `.autoproject/buffer.vim` (see also 
+|g:autoproject#projectrc#buffer_conig|). If the file exists, it gets loaded. This 
+file typically sets project-related settings and variables, i.e., you have to 
+use |:setlocal| (instead of :set) and set |b:| variables.
 
-How to use this plugin~
+Features:~
+- Detect a files project root directory (see |g:autoproject#cd#markers|).
+- Load a project-specific vim configuration file (see 
+  |g:autoproject#projectrc#buffer_conig|).
+- Maintain a list of projects (i.e. project root directories). Use 
+  |:Autoprojectregister| to register an arbitrary directory. Use 
+  |:Autoprojectselect| to quickly open a file in a previously opened project. 
+  When a project is selected this way, the file `.autoproject/global.vim` (see 
+  |g:autoproject#projectrc#global_config|) is loaded if it exists.
+- Maintain project-specific sessions (see |g:autoproject_enable_sessions|, 
+  |:Autoprojectmksession|, and |:Autoprojectleavesession|).
+
+How to use this plugin:~
 - Load a file ... done
-- Report wrongly detected project directories to the plugin author
+    - Report wrongly detected project directories to the plugin author
+- Use |:Autoprojectselect| to switch to a project.
+- Use |:Autoprojectmksession| to create a session for the current project. 
+  Don't forget to use |:Autoprojectleavesession| to save changes to the session 
+  file when you're done.
 
-There are various similar plugins around that try to determine a buffer's 
-project root directory. The autoproject plugin is a mix of those and 
-plugins like localvimrc (and similar plugins).
+If you don't like this plugin, there are various similar plugins around that 
+try to determine a buffer's project root directory. The autoproject plugin is a 
+mix of those and plugins like localvimrc (and similar plugins).
 
 -----------------------------------------------------------------------
 Install~
@@ -33,8 +50,16 @@ or install from github:
     - Change the working directory to `~/.vim/pack/tml/start/`
     - Type: `git clone https://github.com/tomtom/autoproject_vim`
 
-NOTE: If you don't want to run this plugin on startup, use `~/.vim/pack/tml/opt/`.
+NOTE: If you don't want to run this plugin on startup, use 
+`~/.vim/pack/tml/opt/`.
+
 NOTE: On Windows, ~/.vim might be ~/vimfiles. Please see 'runtimepath' for 
 details.
+
+
+Requirements~
+
+This script requires tlib (vimscript #1863) to be installed -- see 
+https://github.com/tomtom/tlib_vim.
 
 %s
