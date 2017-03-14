@@ -1,11 +1,11 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-03-03
-" @Revision:    38
+" @Last Change: 2017-03-10
+" @Revision:    40
 " GetLatestVimScripts: 0 0 :AutoInstall: autoproject.vim
 
-if &cp || exists("loaded_autoproject")
+if &cp || exists('loaded_autoproject')
     finish
 endif
 let loaded_autoproject = 1
@@ -26,12 +26,12 @@ endif
 
 if !exists('g:autoproject_map_edit')
     " Map to invoke |:edit| with a `%:p:h/` argument.
-    let g:autoproject_map_edit = '<Leader>:e'   "{{{2
+    let g:autoproject_map_edit = '<Leader><Leader>e'   "{{{2
 endif
 
 if !exists('g:autoproject_map_saveas')
     " Map to invoke |:saveas| with a `%:p:h/` argument.
-    let g:autoproject_map_saveas = '<Leader>:s'   "{{{2
+    let g:autoproject_map_saveas = '<Leader><Leader>s'   "{{{2
 endif
 
 
