@@ -1,4 +1,4 @@
-*autoproject.txt*  Set a buffer's working directory and project settings
+*autoproject.txt*  Set buffer-local options, the working directory etc. specific to a project
                 Author: Thomas Link, micathom AT gmail com?subject=vim
 
 This plugin tries to detect the current buffer's working directory upon 
@@ -74,9 +74,12 @@ Contents~
         :Autoprojectmksession ................... |:Autoprojectmksession|
         :Autoprojectleavesession ................ |:Autoprojectleavesession|
         g:autoproject#cd#markers ................ |g:autoproject#cd#markers|
+        g:autoproject#list#enter_project_f ...... |g:autoproject#list#enter_project_f|
+        g:autoproject#list#accept_markers ....... |g:autoproject#list#accept_markers|
         g:autoproject#projectrc#buffer_config ... |g:autoproject#projectrc#buffer_config|
         g:autoproject#projectrc#global_config ... |g:autoproject#projectrc#global_config|
         g:autoproject#projectrc#sandbox ......... |g:autoproject#projectrc#sandbox|
+        g:autoproject#session#dir ............... |g:autoproject#session#dir|
 
 
 ------------------------------------------------------------------------
@@ -90,11 +93,11 @@ g:autoproject_enable_sessions  (default: 1)
     If true, enable session handling.
 
                                                     *g:autoproject_map_edit*
-g:autoproject_map_edit         (default: '<Leader>:e')
+g:autoproject_map_edit         (default: '<Leader><Leader>e')
     Map to invoke |:edit| with a `%:p:h/` argument.
 
                                                     *g:autoproject_map_saveas*
-g:autoproject_map_saveas       (default: '<Leader>:s')
+g:autoproject_map_saveas       (default: '<Leader><Leader>s')
     Map to invoke |:saveas| with a `%:p:h/` argument.
 
                                                     *:Autoprojectselect*
@@ -137,6 +140,27 @@ g:autoproject#cd#markers       (default: {...})
 
 
 ------------------------------------------------------------------------
+                                                    *autoload/autoproject/list.vim*
+                                                    *g:autoproject#list#enter_project_f*
+g:autoproject#list#enter_project_f (default: 'call autoproject#list#Open(%s)')
+    A format string (see |printf()|). After selecting a project, 
+    |:execute| this command with the project's root directory filled 
+    in.
+
+    The filename is inserted after as a result of |string()|. Thus, 
+    when using a command, you might have to do use values like:>
+      'exec "Sexplore" fnameescape(%s)'
+      'exec "NERDTree" fnameescape(%s)'
+
+                                                    *g:autoproject#list#accept_markers*
+g:autoproject#list#accept_markers (default: filter(keys(g:autoproject#cd#markers), {i, v -> v !=# 'default'}))
+    A list of project markers (see |g:autoproject#cd#markers|) that 
+    will be registered as project root. All files in 
+    g:autoproject#list#accept_markers should be defined in 
+    |g:autoproject#cd#markers|.
+
+
+------------------------------------------------------------------------
                                                     *autoload/autoproject/projectrc.vim*
                                                     *g:autoproject#projectrc#buffer_config*
 g:autoproject#projectrc#buffer_config (default: ['project.vim', '_projectvim/buffer.vim', '.projectvim/buffer.vim'])
@@ -153,6 +177,14 @@ g:autoproject#projectrc#global_config (default: ['_projectvim/global.vim', '.pro
 g:autoproject#projectrc#sandbox (default: 1)
     If true, evaluate a file from |g:autoproject#projectrc#buffer_config| 
     in a |sandbox|.
+
+
+------------------------------------------------------------------------
+                                                    *autoload/autoproject/session.vim*
+                                                    *g:autoproject#session#dir*
+g:autoproject#session#dir      (default: '')
+    Where to keep session files. If empty, use the first entry in 
+    'runtimepath'.
 
 
 
