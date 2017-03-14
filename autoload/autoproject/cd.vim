@@ -1,8 +1,8 @@
 " @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-03-02
-" @Revision:    173
+" @Last Change: 2017-03-10
+" @Revision:    187
 
 if exists(':Tlibtrace') != 2
     command! -nargs=+ -bang Tlibtrace :
@@ -91,10 +91,11 @@ function! autoproject#cd#ChangeDir(filename, ...) abort "{{{3
         Tlibtrace 'autoproject', default
         let rootdir = ''
         let rootname = ''
+        let is_project = 0
         " let rootw = 0
         " let rootdir = a:0 >= 2 ? eval(a:2) : ''
         let markers = items(g:autoproject#cd#markers)
-        while dir !~ '^\%(/\|\%([a-zA-Z]\+:\)\)\?$'
+        while dir !~# '^\%(/\|\%([a-zA-Z]\+:\)\)\?$'
             Tlibtrace 'autoproject', dir
             try
                 let cdir = tlib#file#Canonic(dir)
@@ -102,9 +103,9 @@ function! autoproject#cd#ChangeDir(filename, ...) abort "{{{3
                 if index(reg, cdir) != -1
                     let rootname = '*reg*'
                     let rootdir = dir
-                    break
+                    throw 'ok'
                 else
-                    let files = globpath(dir, "*", 1, 1) + filter(globpath(dir, ".*", 1, 1), {i, v -> v !~# '\%([\/]\|^\)\?\.\+$'})
+                    let files = globpath(dir, '*', 1, 1) + filter(globpath(dir, '.*', 1, 1), 'v:val !~# ''\%([\/]\|^\)\?\.\+$''')
                     Tlibtrace 'autoproject', files
                     for file in files
                         let basename = matchstr(file, '[^\/]\+$')
@@ -132,6 +133,7 @@ function! autoproject#cd#ChangeDir(filename, ...) abort "{{{3
                 endif
                 let dir = substitute(dir, '[\/][^\/]\+$', '', '')
             catch /ok/
+                let is_project = 1
                 break
             catch
                 echohl ErrorMsg
@@ -156,10 +158,13 @@ function! autoproject#cd#ChangeDir(filename, ...) abort "{{{3
         let b:autoproject_lcd = rootname
         exec cmd fnameescape(rootdir)
         call autoproject#projectrc#LoadBufferConfig(rootdir)
-        if rootname ==# '*reg*'
-            call autoproject#list#RegisterDir(rootdir)
-        else
-            call autoproject#list#RegisterNameDir(rootname, rootdir)
+        Tlibtrace 'autoproject', rootdir, $HOME, dir, is_project
+        if is_project
+            if rootname ==# '*reg*'
+                call autoproject#list#RegisterDir(rootdir)
+            else
+                call autoproject#list#RegisterNameDir(rootname, rootdir)
+            endif
         endif
     endif
 endf
