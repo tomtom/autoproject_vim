@@ -1,8 +1,8 @@
 " @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     https://github.com/tomtom
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-03-02
-" @Revision:    107
+" @Last Change: 2017-03-19
+" @Revision:    113
 
 
 if !exists('g:loaded_tlib') || g:loaded_tlib < 123
@@ -23,7 +23,7 @@ if !exists('g:autoproject#list#enter_project_f')
     " when using a command, you might have to do use values like:>
     "   'exec "Sexplore" fnameescape(%s)'
     "   'exec "NERDTree" fnameescape(%s)'
-    let g:autoproject#list#enter_project_f = 'call autoproject#list#Open(%s)'   "{{{2
+    let g:autoproject#list#enter_project_f = 'exec "Sexplore" fnameescape(%s)'   "{{{2
 endif
 
 
@@ -42,7 +42,7 @@ if !exists('g:autoproject#list#accept_markers')
     " will be registered as project root. All files in 
     " g:autoproject#list#accept_markers should be defined in 
     " |g:autoproject#cd#markers|.
-    let g:autoproject#list#accept_markers = filter(keys(g:autoproject#cd#markers), {i, v -> v !=# 'default'}) "{{{2
+    let g:autoproject#list#accept_markers = filter(keys(g:autoproject#cd#markers), 'v:val !=# ''default''') "{{{2
 endif
 
 
@@ -79,7 +79,7 @@ function! autoproject#list#RegisterDir(dir) abort "{{{3
         if len(reg) > g:autoproject#list#maxlen
             let reg = reg[0 : (g:autoproject#list#maxlen - 1)]
         endif
-        let reg = map(reg, {i, v -> substitute(v, '[\/]\+$', '', '')})
+        let reg = map(reg, 'substitute(v:val, ''[\/]\+$'', '''', '''')')
         let reg = tlib#list#Uniq(reg)
         call tlib#cache#Save(reg_cname, reg)
     endif
@@ -108,11 +108,11 @@ function! autoproject#list#Open(dir) abort "{{{3
     let base = matchstr(a:dir, '\%(^\|[\/]\)\zs[^\/]\+\ze[\/]\?$')
     let name = tlib#file#Join([a:dir, '__FILES@'. base .'__'])
     let scratch = tlib#scratch#UseScratch({'scratch': name})
-    setl tw=0
+    setl textwidth=0
     exec 'lcd' fnameescape(a:dir)
     let files = glob('**', 0, 1)
-    let files = filter(files, {i,v -> !isdirectory(v)})
-    let files = filter(files, {i,v -> v !~# g:autoproject#list#files_reject_rx})
+    let files = filter(files, '!isdirectory(v:val)')
+    let files = filter(files, 'v:val !~# g:autoproject#list#files_reject_rx')
     let files = sort(files)
     % delete
     call append(0, files)
