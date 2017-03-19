@@ -7,5 +7,5 @@
     "dependencies" : {
     "tlib": {"type": "git", "url": "git://github.com/tomtom/tlib_vim.git"}
   },
-    "description" : "Set a buffer's working directory and project settings"
+    "description" : "Set buffer-local options, the working directory etc. specific to a project"
 }
