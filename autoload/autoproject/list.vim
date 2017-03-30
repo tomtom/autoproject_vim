@@ -1,8 +1,8 @@
 " @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     https://github.com/tomtom
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-03-19
-" @Revision:    113
+" @Last Change: 2017-03-29
+" @Revision:    114
 
 
 if !exists('g:loaded_tlib') || g:loaded_tlib < 123
@@ -54,8 +54,8 @@ TLet g:autoproject#list#world = {
 
 
 function! autoproject#list#GetReg() abort "{{{3
-    let reg_cname = tlib#cache#EncodedFilename('autoproject', '*registry*', 1)
-    let reg = tlib#cache#Get(reg_cname, [])
+    let reg_cname = tlib#persistent#EncodedFilename('autoproject', '*registry*', 1)
+    let reg = tlib#persistent#Get(reg_cname, [])
     return [reg_cname, reg]
 endf
 
@@ -81,7 +81,7 @@ function! autoproject#list#RegisterDir(dir) abort "{{{3
         endif
         let reg = map(reg, 'substitute(v:val, ''[\/]\+$'', '''', '''')')
         let reg = tlib#list#Uniq(reg)
-        call tlib#cache#Save(reg_cname, reg)
+        call tlib#persistent#Save(reg_cname, reg)
     endif
 endf
 
