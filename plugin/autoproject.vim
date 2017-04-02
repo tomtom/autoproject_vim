@@ -1,8 +1,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-03-18
-" @Revision:    42
+" @Last Change: 2017-04-02
+" @Revision:    43
 " GetLatestVimScripts: 0 0 :AutoInstall: autoproject.vim
 
 if &cp || exists('loaded_autoproject')
@@ -64,7 +64,7 @@ command! -bar -bang Autoprojectselect call autoproject#list#Select(!empty("<bang
 
 " :display: :Autoprojectregister [DIR]
 " Register DIR or the current buffer's directory.
-command! -nargs=1 -bar -complete=dir Autoprojectregister call autoproject#list#RegisterDir(empty(<q-args>) ? expand('%:p:h') : <q-args>)
+command! -nargs=? -bar -complete=dir Autoprojectregister call autoproject#list#RegisterDir(empty(<q-args>) ? expand('%:p:h') : <q-args>)
 
 
 if g:autoproject_enable_sessions
