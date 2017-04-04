@@ -38,7 +38,7 @@ endif
 augroup Autoproject
     autocmd!
     autocmd BufNewFile,BufRead * if empty(&buftype) && &buflisted && g:autoproject_enable_cd | call autoproject#cd#Buffer(expand("<afile>:p")) | else | call autoproject#projectrc#SearchAndLoad(expand('%:p:h')) | endif
-    autocmd VimLeave * if g:autoproject_enable_sessions | call autoproject#session#Leave(0) | endif
+    " autocmd VimLeave * if g:autoproject_enable_sessions | call autoproject#session#Leave(0) | endif
 augroup END
 
 
