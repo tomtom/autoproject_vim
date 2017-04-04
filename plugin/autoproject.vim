@@ -1,8 +1,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-04-02
-" @Revision:    43
+" @Last Change: 2017-04-03
+" @Revision:    48
 " GetLatestVimScripts: 0 0 :AutoInstall: autoproject.vim
 
 if &cp || exists('loaded_autoproject')
@@ -62,9 +62,12 @@ endif
 command! -bar -bang Autoprojectselect call autoproject#list#Select(!empty("<bang>"))
 
 
-" :display: :Autoprojectregister [DIR]
-" Register DIR or the current buffer's directory.
-command! -nargs=? -bar -complete=dir Autoprojectregister call autoproject#list#RegisterDir(empty(<q-args>) ? expand('%:p:h') : <q-args>)
+" :display: :Autoprojectregister[!] [DIR]
+" Register DIR or the current buffer's directory and set the buffer's 
+" working directory.
+"
+" With the optional bang "!", also set the buffer's directory.
+command! -bang -nargs=? -bar -complete=dir Autoprojectregister call autoproject#list#RegisterDir(empty(<q-args>) ? expand('%:p:h') : <q-args>, !empty("<bang>"))
 
 
 if g:autoproject_enable_sessions

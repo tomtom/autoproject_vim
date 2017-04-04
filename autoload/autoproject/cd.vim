@@ -1,8 +1,8 @@
 " @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-03-10
-" @Revision:    187
+" @Last Change: 2017-04-03
+" @Revision:    193
 
 if exists(':Tlibtrace') != 2
     command! -nargs=+ -bang Tlibtrace :
@@ -78,19 +78,17 @@ function! autoproject#cd#ChangeDir(filename, ...) abort "{{{3
     if getbufvar(a:filename, '&buftype') ==# 'nofile'
         return
     endif
-    let cmd = a:0 >= 1 ? a:1 : g:autoproject#cd#cmd
-    Tlibtrace 'autoproject', cmd
     let dir = fnamemodify(a:filename, ':p:h')
     let [reg_cname, reg] = autoproject#list#GetReg()
     Tlibtrace 'autoproject', reg
     if getbufvar(a:filename, 'autoproject_use_bufdir', 0) || (!empty(g:autoproject#cd#buffer_use_bufdir_rx) && a:filename =~ g:autoproject#cd#buffer_use_bufdir_rx)
         let rootdir = dir
-        let rootname = 'bufdir'
+        let rootmode = 'bufdir'
     else
-        let default = a:0 >= 2 ? a:2 : dir
+        let default = a:0 >= 1 ? a:1 : dir
         Tlibtrace 'autoproject', default
         let rootdir = ''
-        let rootname = ''
+        let rootmode = ''
         let is_project = 0
         " let rootw = 0
         " let rootdir = a:0 >= 2 ? eval(a:2) : ''
@@ -101,7 +99,7 @@ function! autoproject#cd#ChangeDir(filename, ...) abort "{{{3
                 let cdir = tlib#file#Canonic(dir)
                 Tlibtrace 'autoproject', cdir
                 if index(reg, cdir) != -1
-                    let rootname = '*reg*'
+                    let rootmode = '*reg*'
                     let rootdir = dir
                     throw 'ok'
                 else
@@ -123,7 +121,7 @@ function! autoproject#cd#ChangeDir(filename, ...) abort "{{{3
                                     endif
                                 else
                                     let rootdir = dir
-                                    let rootname = name
+                                    let rootmode = name
                                     Tlibtrace 'autoproject', 'rootdir', default
                                 endif
                                 throw 'ok'
@@ -145,28 +143,33 @@ function! autoproject#cd#ChangeDir(filename, ...) abort "{{{3
         Tlibtrace 'autoproject', rootdir, default
         if empty(rootdir)
             let rootdir = default
-            let rootname = 'default'
+            let rootmode = 'default'
             " echom 'DBG autoproject#cd#ChangeDir default' default
         endif
     endif
     if !empty(rootdir)
-        " echom 'DBG autoproject#cd#ChangeDir' cmd rootdir
-        if g:autoproject#cd#verbose
-            echom 'autoproject:' cmd rootdir
-        endif
-        Tlibtrace 'autoproject', cmd, rootdir, bufnr('%')
-        let b:autoproject_lcd = rootname
-        exec cmd fnameescape(rootdir)
-        call autoproject#projectrc#LoadBufferConfig(rootdir)
+        call autoproject#cd#SetCD(rootmode, rootdir)
         Tlibtrace 'autoproject', rootdir, $HOME, dir, is_project
         if is_project
-            if rootname ==# '*reg*'
+            if rootmode ==# '*reg*'
                 call autoproject#list#RegisterDir(rootdir)
             else
-                call autoproject#list#RegisterNameDir(rootname, rootdir)
+                call autoproject#list#RegisterNameDir(rootmode, rootdir)
             endif
         endif
     endif
+endf
+
+
+function! autoproject#cd#SetCD(mode, dir) abort "{{{3
+    let cmd = g:autoproject#cd#cmd
+    if g:autoproject#cd#verbose
+        echom 'autoproject:' cmd a:dir
+    endif
+    Tlibtrace 'autoproject', cmd, a:dir, bufnr('%')
+    let b:autoproject_lcd = a:mode
+    exec cmd fnameescape(a:dir)
+    call autoproject#projectrc#LoadBufferConfig(a:dir)
 endf
 
 
@@ -198,7 +201,7 @@ function! autoproject#cd#Buffer(filename) abort "{{{3
     if !exists('b:autoproject_lcd') && !empty(a:filename) && a:filename !~ g:autoproject#cd#buffer_blacklist_rx
         let default = eval(printf(g:autoproject#cd#buffer_default_exprf, string(a:filename)))
         Tlibtrace 'autoproject', default, a:filename
-        call autoproject#cd#ChangeDir(a:filename, 'lcd', default)
+        call autoproject#cd#ChangeDir(a:filename, default)
     endif
 endf
 
