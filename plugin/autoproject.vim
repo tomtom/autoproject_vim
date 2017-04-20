@@ -1,8 +1,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-04-03
-" @Revision:    48
+" @Last Change: 2017-04-19
+" @Revision:    50
 " GetLatestVimScripts: 0 0 :AutoInstall: autoproject.vim
 
 if &cp || exists('loaded_autoproject')
@@ -68,6 +68,12 @@ command! -bar -bang Autoprojectselect call autoproject#list#Select(!empty("<bang
 "
 " With the optional bang "!", also set the buffer's directory.
 command! -bang -nargs=? -bar -complete=dir Autoprojectregister call autoproject#list#RegisterDir(empty(<q-args>) ? expand('%:p:h') : <q-args>, !empty("<bang>"))
+
+
+" :display: :Autoprojectfocus [PROJECT]
+" Focus on PROJECT (or the current buffer's project), i.e. delete all 
+" other buffers.
+command! -bar Autoprojectfocus call autoproject#buffer#Focus(<f-args>)
 
 
 if g:autoproject_enable_sessions
