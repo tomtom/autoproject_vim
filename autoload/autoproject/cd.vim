@@ -1,8 +1,8 @@
 " @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-04-03
-" @Revision:    193
+" @Last Change: 2017-04-20
+" @Revision:    207
 
 if exists(':Tlibtrace') != 2
     command! -nargs=+ -bang Tlibtrace :
@@ -66,6 +66,20 @@ endif
 
 if !exists('g:autoproject#cd#buffer_use_bufdir_rx')
     let g:autoproject#cd#buffer_use_bufdir_rx = ''   "{{{2
+endif
+
+
+if !exists('g:autoproject#cd#name_map')
+    " A map {ROOTDIR => NAME}.
+    "
+    " By default, a project names is the tail of ROOTDIR (should be all 
+    " slashes, no backslashes). Use this dictionary, to assign a 
+    " different project name to a rootdir.
+    "                                                   *b:autoproject_name*
+    " The project NAME will be assigned to `b:autoproject_name` unless 
+    " it was already set in the project config file (see 
+    " |g:autoproject#projectrc#buffer_config|).
+    let g:autoproject#cd#name_map = {}   "{{{2
 endif
 
 
@@ -151,14 +165,24 @@ function! autoproject#cd#ChangeDir(filename, ...) abort "{{{3
         call autoproject#cd#SetCD(rootmode, rootdir)
         Tlibtrace 'autoproject', rootdir, $HOME, dir, is_project
         if is_project
+            unlet! b:autoproject_name
             if rootmode ==# '*reg*'
                 call autoproject#list#RegisterDir(rootdir)
             else
                 call autoproject#list#RegisterNameDir(rootmode, rootdir)
             endif
+            if !exists('b:autoproject_name')
+                let crootdir = tlib#file#Canonic(dir)
+                let b:autoproject_name = get(g:autoproject#cd#name_map, crootdir, matchstr(crootdir, '[^\/]\+\ze[\/]\?$'))
+            endif
         endif
     endif
 endf
+
+
+if exists(':TStatusregister1') == 2
+    TStatusregister --event=BufWinEnter b:autoproject_name=APrj
+endif
 
 
 function! autoproject#cd#SetCD(mode, dir) abort "{{{3
