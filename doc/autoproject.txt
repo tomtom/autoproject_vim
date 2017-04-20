@@ -83,9 +83,12 @@ Contents~
         g:autoproject_map_saveas ................ |g:autoproject_map_saveas|
         :Autoprojectselect ...................... |:Autoprojectselect|
         :Autoprojectregister .................... |:Autoprojectregister|
+        :Autoprojectfocus ....................... |:Autoprojectfocus|
         :Autoprojectmksession ................... |:Autoprojectmksession|
         :Autoprojectleavesession ................ |:Autoprojectleavesession|
+        g:autoproject#buffer#unfocussed_rx ...... |g:autoproject#buffer#unfocussed_rx|
         g:autoproject#cd#markers ................ |g:autoproject#cd#markers|
+        g:autoproject#cd#name_map ............... |g:autoproject#cd#name_map|
         g:autoproject#list#enter_project_f ...... |g:autoproject#list#enter_project_f|
         g:autoproject#list#accept_markers ....... |g:autoproject#list#accept_markers|
         g:autoproject#projectrc#buffer_config ... |g:autoproject#projectrc#buffer_config|
@@ -128,6 +131,11 @@ g:autoproject_map_saveas       (default: '<Leader><Leader>s')
 
     With the optional bang "!", also set the buffer's directory.
 
+                                                    *:Autoprojectfocus*
+:Autoprojectfocus [PROJECT]
+    Focus on PROJECT (or the current buffer's project), i.e. delete all 
+    other buffers.
+
                                                     *:Autoprojectmksession*
 :Autoprojectmksession [DIR]
     Create a session for a working directory.
@@ -137,6 +145,14 @@ g:autoproject_map_saveas       (default: '<Leader><Leader>s')
                                                     *:Autoprojectleavesession*
 :Autoprojectleavesession
     Leave a session. Update the session file. Close all buffers.
+
+
+------------------------------------------------------------------------
+                                                    *autoload/autoproject/buffer.vim*
+                                                    *g:autoproject#buffer#unfocussed_rx*
+g:autoproject#buffer#unfocussed_rx (default: '[\/]__\S\+__$')
+    A |regexp| of buffer names that will be ignored on 
+    |:Autoprojectfocus|.
 
 
 ------------------------------------------------------------------------
@@ -152,6 +168,18 @@ g:autoproject#cd#markers       (default: {...})
 
     The variable g:autoproject#cd#markers_user will be concatenated to 
     this variable.
+
+                                                    *g:autoproject#cd#name_map*
+g:autoproject#cd#name_map      (default: {})
+    A map {ROOTDIR => NAME}.
+
+    By default, a project names is the tail of ROOTDIR (should be all 
+    slashes, no backslashes). Use this dictionary, to assign a 
+    different project name to a rootdir.
+                                                      *b:autoproject_name*
+    The project NAME will be assigned to `b:autoproject_name` unless 
+    it was already set in the project config file (see 
+    |g:autoproject#projectrc#buffer_config|).
 
 
 ------------------------------------------------------------------------
