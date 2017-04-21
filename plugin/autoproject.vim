@@ -1,9 +1,9 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-04-19
-" @Revision:    50
-" GetLatestVimScripts: 0 0 :AutoInstall: autoproject.vim
+" @Last Change: 2017-04-21
+" @Revision:    51
+" GetLatestVimScripts: 5550 0 :AutoInstall: autoproject.vim
 
 if &cp || exists('loaded_autoproject')
     finish
