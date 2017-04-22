@@ -1,8 +1,8 @@
 " @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-04-20
-" @Revision:    207
+" @Last Change: 2017-04-22
+" @Revision:    212
 
 if exists(':Tlibtrace') != 2
     command! -nargs=+ -bang Tlibtrace :
@@ -129,7 +129,7 @@ function! autoproject#cd#ChangeDir(filename, ...) abort "{{{3
                             if s:Match(item, name, mdef)
                                 Tlibtrace 'autoproject', item, name
                                 if get(mdef, 'fallback', 0)
-                                    if item != $HOME
+                                    if dir != $HOME
                                         let default = dir
                                         Tlibtrace 'autoproject', 'fallback', default, item, basename, dir
                                     endif
@@ -137,8 +137,8 @@ function! autoproject#cd#ChangeDir(filename, ...) abort "{{{3
                                     let rootdir = dir
                                     let rootmode = name
                                     Tlibtrace 'autoproject', 'rootdir', default
+                                    throw 'ok'
                                 endif
-                                throw 'ok'
                             endif
                         endfor
                     endfor
