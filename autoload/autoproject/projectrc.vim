@@ -1,14 +1,14 @@
 " @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-03-02
-" @Revision:    35
+" @Last Change: 2017-04-23
+" @Revision:    36
 
 
 if !exists('g:autoproject#projectrc#buffer_config')
     " A list of files for project-related buffer-local settings.
     " Only the first matching file will be loaded.
-    let g:autoproject#projectrc#buffer_config = ['project.vim', '_projectvim/buffer.vim', '.projectvim/buffer.vim']   "{{{2
+    let g:autoproject#projectrc#buffer_config = ['_project.vim', '.project.vim', '_projectvim/buffer.vim', '.projectvim/buffer.vim']   "{{{2
 endif
 if exists('g:autoproject#projectrc#buffer_config_user')
     let g:autoproject#projectrc#buffer_config += g:autoproject#projectrc#buffer_config_user
