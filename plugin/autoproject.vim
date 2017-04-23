@@ -1,8 +1,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-04-22
-" @Revision:    55
+" @Last Change: 2017-04-23
+" @Revision:    59
 " GetLatestVimScripts: 5550 0 :AutoInstall: autoproject.vim
 
 if &cp || exists('loaded_autoproject')
@@ -85,15 +85,9 @@ endif
 
 augroup Autoproject
     autocmd!
-    autocmd BufNewFile,BufRead * if !empty(bufname('%')) && empty(&buftype) && &buflisted && g:autoproject_enable_cd | call autoproject#cd#Buffer(expand("<afile>:p")) | else | call autoproject#projectrc#SearchAndLoad(expand('%:p:h')) | endif
+    autocmd BufEnter * if !empty(bufname('%')) && empty(&buftype) && &buflisted && g:autoproject_enable_cd | call autoproject#cd#Buffer(expand("<afile>:p")) | else | call autoproject#projectrc#SearchAndLoad(expand('%:p:h')) | endif
     " autocmd VimLeave * if g:autoproject_enable_sessions | call autoproject#session#Leave(0) | endif
 augroup END
-
-if has('vim_starting')
-    autocmd Autoproject VimEnter * doautoall Autoproject BufRead %
-else
-    doautoall Autoproject BufRead %
-endif
 
 
 let &cpo = s:save_cpo
