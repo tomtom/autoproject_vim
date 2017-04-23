@@ -206,7 +206,7 @@ g:autoproject#list#accept_markers (default: filter(keys(g:autoproject#cd#markers
 ------------------------------------------------------------------------
                                                     *autoload/autoproject/projectrc.vim*
                                                     *g:autoproject#projectrc#buffer_config*
-g:autoproject#projectrc#buffer_config (default: ['project.vim', '_projectvim/buffer.vim', '.projectvim/buffer.vim'])
+g:autoproject#projectrc#buffer_config (default: ['_project.vim', '.project.vim', '_projectvim/buffer.vim', '.projectvim/buffer.vim'])
     A list of files for project-related buffer-local settings.
     Only the first matching file will be loaded.
 
