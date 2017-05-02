@@ -54,13 +54,15 @@ How to use this plugin:~
 Install~
 
 Either use the zip archive:
-    - Download the zip archive
-    - Extract it to `~/.vim/pack/tml/start/autoproject`
+
+- Download the zip archive
+- Extract it to `~/.vim/pack/tml/start/autoproject`
 
 or install from github:
-    - Start a terminal
-    - Change the working directory to `~/.vim/pack/tml/start/`
-    - Type: `git clone https://github.com/tomtom/autoproject_vim`
+
+- Start a terminal
+- Change the working directory to `~/.vim/pack/tml/start/`
+- Type: `git clone https://github.com/tomtom/autoproject_vim`
 
 NOTE: If you don't want to run this plugin on startup, use 
 `~/.vim/pack/tml/opt/`.
