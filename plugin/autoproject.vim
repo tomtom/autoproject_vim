@@ -1,8 +1,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-04-23
-" @Revision:    59
+" @Last Change: 2017-05-01
+" @Revision:    62
 " GetLatestVimScripts: 5550 0 :AutoInstall: autoproject.vim
 
 if &cp || exists('loaded_autoproject')
@@ -36,12 +36,12 @@ endif
 
 
 if !empty(g:autoproject_map_edit)
-    exec 'nmap <expr>' g:autoproject_map_edit '":e ". expand("%:p:h") ."/"'
+    exec 'nmap <expr>' g:autoproject_map_edit '":e ". fnameescape(expand("%:p:h")) ."/"'
 endif
 
 
 if !empty(g:autoproject_map_saveas)
-    exec 'nmap <expr>' g:autoproject_map_saveas '":saveas ". expand("%:p:h") ."/"'
+    exec 'nmap <expr>' g:autoproject_map_saveas '":saveas ". fnameescape(expand("%:p:h")) ."/"'
 endif
 
 
