@@ -1,0 +1,8 @@
+version: "0.02"
+  - autoproject#cd#ChangeDir(): FIX properly handle fallback markers & home directory
+  - On startup: Don't forget about the current buffer (opened from the command line)
+  - Use the BufEnter event to set the cd
+  - g:autoproject#projectrc#buffer_config: .project.vim and _project.vim replaces project.vim
+  - Maps: properly escape filenames
+  SHA256 checksum: c7d6b45462f66016eb4f8acac9725d645c4b0f28759cad81bf6bf980b1d5016a
+
