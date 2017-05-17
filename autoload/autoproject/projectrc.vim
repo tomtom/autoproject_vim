@@ -1,8 +1,8 @@
 " @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-04-23
-" @Revision:    36
+" @Last Change: 2017-05-08
+" @Revision:    51
 
 
 if !exists('g:autoproject#projectrc#buffer_config')
@@ -50,14 +50,28 @@ function! autoproject#projectrc#LoadConfig(rootdir, type) abort "{{{3
 endf
 
 
-" let s:global_done = {}
+let s:global_done = {}
 
-function! autoproject#projectrc#LoadGlobalConfig(rootdir) abort "{{{3
-    " let cdir = tlib#file#Canonic(fnamemodify(a:rootdir, ':p'))
-    " if !has_key(s:global_done, cdir)
-    call autoproject#projectrc#LoadConfig(a:rootdir, 'global')
-    "     let s:global_done[cdir] = 1
-    " endif
+function! autoproject#projectrc#LoadGlobalConfig(rootdir, ...) abort "{{{3
+    let always = a:0 >= 1 ? a:1 : 0
+    Tlibtrace 'autoproject', a:rootdir, always
+    let cdir = tlib#file#Canonic(fnamemodify(a:rootdir, ':p'))
+    let rv = 0
+    if always || !has_key(s:global_done, cdir)
+        let s:global_done[cdir] = 1
+        if autoproject#projectrc#LoadConfig(a:rootdir, 'global')
+            Tlibtrace 'autoproject', exists('g:autoproject_fileset')
+            if exists('g:autoproject_fileset')
+                for filename in g:autoproject_fileset
+                    Tlibtrace 'autoproject', filename
+                    let filename1 = tlib#file#Canonic(tlib#file#Join([a:rootdir, filename]))
+                    let rv = rv || autoproject#files#Ensure(filename1)
+                endfor
+                unlet g:autoproject_fileset
+            endif
+        endif
+    endif
+    return rv
 endf
 
 

@@ -1,8 +1,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-05-02
-" @Revision:    63
+" @Last Change: 2017-05-08
+" @Revision:    64
 " GetLatestVimScripts: 5550 0 :AutoInstall: autoproject.vim
 
 if &cp || exists('loaded_autoproject')
@@ -21,6 +21,11 @@ endif
 
 if !exists('g:autoproject_enable_sessions')
     " If true, enable session handling.
+    "                                                   *g:autoproject_fileset*
+    " NOTE: If a project is entered via |:Autoprojectselect| and if the 
+    " project's global config set the variable `g:autoproject_fileset` 
+    " (a list), then the files in that list will be opened and the 
+    " session won't be restored.
     let g:autoproject_enable_sessions = 1   "{{{2
 endif
 
