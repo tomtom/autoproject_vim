@@ -19,7 +19,7 @@ if !exists('g:autoproject#projectrc#global_config')
     " A list of files for project-related settings. This file will be 
     " loaded when switching to a project via |:Autoprojectselect|.
     " Only the first matching file will be loaded.
-    let g:autoproject#projectrc#global_config = ['_projectvim/global.vim', '.projectvim/global.vim']   "{{{2
+    let g:autoproject#projectrc#global_config = ['_projectglobal.vim', '.projectglobal.vim', '_projectvim/global.vim', '.projectvim/global.vim']   "{{{2
 endif
 if exists('g:autoproject#projectrc#global_config_user')
     let g:autoproject#projectrc#global_config += g:autoproject#projectrc#global_config_user
