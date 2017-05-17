@@ -1,8 +1,8 @@
 " @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     https://github.com/tomtom
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-04-03
-" @Revision:    116
+" @Last Change: 2017-05-08
+" @Revision:    122
 
 
 if !exists('g:loaded_tlib') || g:loaded_tlib < 124
@@ -98,11 +98,12 @@ function! autoproject#list#Select(...) abort "{{{3
     let w.base = reg
     let dir = tlib#input#ListW(w)
     if !empty(dir)
-        call autoproject#projectrc#LoadGlobalConfig(dir)
-        if !g:autoproject_enable_sessions || !autoproject#session#MaybeRestore(dir, a:0 >= 1 ? a:1 : 0)
-            let cmd = printf(g:autoproject#list#enter_project_f, string(dir))
-            Tlibtrace 'autoproject', cmd
-            exec cmd
+        if !autoproject#projectrc#LoadGlobalConfig(dir, 1)
+            if !g:autoproject_enable_sessions || !autoproject#session#MaybeRestore(dir, a:0 >= 1 ? a:1 : 0)
+                let cmd = printf(g:autoproject#list#enter_project_f, string(dir))
+                Tlibtrace 'autoproject', cmd
+                exec cmd
+            endif
         endif
     endif
 endf
