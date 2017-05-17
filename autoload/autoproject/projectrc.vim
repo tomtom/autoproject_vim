@@ -43,9 +43,10 @@ function! autoproject#projectrc#LoadConfig(rootdir, type) abort "{{{3
         Tlibtrace 'autoproject', filename, filereadable(filename)
         if filereadable(filename)
             exec s:sandbox_cmd 'source' fnameescape(filename)
-            break
+            return 1
         endif
     endfor
+    return 0
 endf
 
 
