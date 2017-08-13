@@ -1,8 +1,8 @@
 " @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     https://github.com/tomtom
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-05-08
-" @Revision:    122
+" @Last Change: 2017-08-13
+" @Revision:    123
 
 
 if !exists('g:loaded_tlib') || g:loaded_tlib < 124
@@ -70,7 +70,7 @@ endf
 function! autoproject#list#RegisterDir(dir, ...) abort "{{{3
     let setwd = a:0 >= 1 ? a:1 : 0
     let [reg_cname, reg] = autoproject#list#GetReg()
-    let dir = tlib#file#Canonic(fnamemodify(a:dir, ':p'))
+    let dir = tlib#file#Canonic(fnamemodify(a:dir, ':p:h'))
     let diri = index(reg, dir)
     if diri != 0
         if diri > 0
