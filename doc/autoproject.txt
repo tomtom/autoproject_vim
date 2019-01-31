@@ -108,6 +108,11 @@ g:autoproject_enable_cd        (default: !(&autochdir))
                                                     *g:autoproject_enable_sessions*
 g:autoproject_enable_sessions  (default: 1)
     If true, enable session handling.
+                                                      *g:autoproject_fileset*
+    NOTE: If a project is entered via |:Autoprojectselect| and if the 
+    project's global config set the variable `g:autoproject_fileset` 
+    (a list), then the files in that list will be opened and the 
+    session won't be restored.
 
                                                     *g:autoproject_map_edit*
 g:autoproject_map_edit         (default: '<Leader><Leader>e')
@@ -213,7 +218,7 @@ g:autoproject#projectrc#buffer_config (default: ['_project.vim', '.project.vim',
     Only the first matching file will be loaded.
 
                                                     *g:autoproject#projectrc#global_config*
-g:autoproject#projectrc#global_config (default: ['_projectvim/global.vim', '.projectvim/global.vim'])
+g:autoproject#projectrc#global_config (default: ['_projectglobal.vim', '.projectglobal.vim', '_projectvim/global.vim', '.projectvim/global.vim'])
     A list of files for project-related settings. This file will be 
     loaded when switching to a project via |:Autoprojectselect|.
     Only the first matching file will be loaded.
