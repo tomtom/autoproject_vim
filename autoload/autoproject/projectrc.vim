@@ -1,8 +1,8 @@
 " @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-05-08
-" @Revision:    51
+" @Last Change: 2017-10-13
+" @Revision:    61
 
 
 if !exists('g:autoproject#projectrc#buffer_config')
@@ -34,10 +34,11 @@ endif
 
 let s:sandbox_cmd = g:autoproject#projectrc#sandbox ? 'sandbox' : ''
 
-
-function! autoproject#projectrc#LoadConfig(rootdir, type) abort "{{{3
+function! s:LoadConfig(rootdir, type) abort "{{{3
     Tlibtrace 'autoproject', a:rootdir, a:type
-    call assert_true(exists('g:autoproject#projectrc#'. a:type .'_config'))
+    if !exists('g:autoproject#projectrc#'. a:type .'_config')
+        throw 's:LoadConfig: No known config for '. a:type
+    endif
     for basename in g:autoproject#projectrc#{a:type}_config
         let filename = a:rootdir .'/'. basename
         Tlibtrace 'autoproject', filename, filereadable(filename)
@@ -59,7 +60,7 @@ function! autoproject#projectrc#LoadGlobalConfig(rootdir, ...) abort "{{{3
     let rv = 0
     if always || !has_key(s:global_done, cdir)
         let s:global_done[cdir] = 1
-        if autoproject#projectrc#LoadConfig(a:rootdir, 'global')
+        if s:LoadConfig(a:rootdir, 'global')
             Tlibtrace 'autoproject', exists('g:autoproject_fileset')
             if exists('g:autoproject_fileset')
                 for filename in g:autoproject_fileset
@@ -78,7 +79,7 @@ endf
 function! autoproject#projectrc#LoadBufferConfig(rootdir) abort "{{{3
     if !exists('b:autoproject_pvim')
         let b:autoproject_pvim = 1
-        call autoproject#projectrc#LoadConfig(a:rootdir, 'buffer')
+        call s:LoadConfig(a:rootdir, 'buffer')
     endif
 endf
 
