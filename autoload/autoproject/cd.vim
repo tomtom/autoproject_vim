@@ -1,8 +1,8 @@
 " @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-10-13
-" @Revision:    215
+" @Last Change: 2019-05-06
+" @Revision:    217
 
 if exists(':Tlibtrace') != 2
     command! -nargs=+ -bang Tlibtrace :
@@ -26,6 +26,7 @@ if !exists('g:autoproject#cd#markers')
     " this variable.
     " :read: let g:autoproject#cd#markers = {...}   "{{{2
     let g:autoproject#cd#markers = {
+                \ '*.Rproj': {'match': 'glob'},
                 \ '.cvs': {},
                 \ '.git': {},
                 \ '.hg': {},
@@ -34,6 +35,7 @@ if !exists('g:autoproject#cd#markers')
                 \ '.classpath': {},
                 \ '.iml': {},
                 \ 'build.gradle': {},
+                \ '.editorconfig': {},
                 \ 'project.json': {},
                 \ '.projectvim': {},
                 \ '_projectvim': {},
