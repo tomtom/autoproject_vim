@@ -1,14 +1,14 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
-" @Last Change: 2017-10-13
-" @Revision:    65
+" @Last Change: 2021-01-24
+" @Revision:    67
 " GetLatestVimScripts: 5550 0 :AutoInstall: autoproject.vim
 
 if &cp || exists('loaded_autoproject')
     finish
 endif
-let loaded_autoproject = 2
+let loaded_autoproject = 3
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -71,7 +71,12 @@ command! -bang -nargs=? -bar -complete=dir Autoprojectregister call autoproject#
 " :display: :Autoprojectfocus [PROJECT]
 " Focus on PROJECT (or the current buffer's project), i.e. delete all 
 " other buffers.
-command! -bar Autoprojectfocus call autoproject#buffer#Focus(<f-args>)
+command! -bar -nargs=? Autoprojectfocus call autoproject#buffer#Focus(<f-args>)
+
+
+" :display: :Autoprojectredir DIR
+" Map a root directory (of the current buffer) to some other directory.
+command! -bar -nargs=1 -complete=dir Autoprojectredir call autoproject#cd#MapDir(<q-args>)
 
 
 if g:autoproject_enable_sessions

@@ -90,6 +90,37 @@ if !exists('g:autoproject#cd#verbose')
 endif
 
 
+function! autoproject#cd#GetMap() abort "{{{3
+    let persist_cname = tlib#persistent#EncodedFilename('autoproject', '*map*', 1)
+    let persist = tlib#persistent#Get(persist_cname, {'*version*': 0})
+    return [persist_cname, persist]
+endf
+
+
+function! autoproject#cd#SaveMap(persist_cname, persist) abort "{{{3
+    call tlib#persistent#Save(a:persist_cname, a:persist)
+endf
+
+
+function! autoproject#cd#MaybeMap(cdir) abort "{{{3
+    let [persist_cname, persist] = autoproject#cd#GetMap()
+    return get(persist, a:cdir, a:cdir)
+endf
+
+
+function! autoproject#cd#MapDir(redir, ...) abort "{{{3
+    let dir = a:0 >= 1 ? a:1 : expand('%')
+    let [persist_cname, persist] = autoproject#cd#GetMap()
+    let cdir = tlib#file#Canonic(tlib#file#Absolute(dir))
+    let credir = tlib#file#Canonic(tlib#file#Absolute(a:redir))
+    if !has_key(persist, cdir) || persist[cdir] !=# credir
+        let persist[cdir] = credir
+        call autoproject#cd#SaveMap(persist_cname, persist)
+    endif
+    call tlib#buffer#BufDo('if b:autoproject_dir == cdir | call s:SetBufVars(a:credir) | endif')
+endf
+
+
 function! autoproject#cd#ChangeDir(filename, ...) abort "{{{3
     if getbufvar(a:filename, '&buftype') ==# 'nofile'
         return
@@ -164,22 +195,34 @@ function! autoproject#cd#ChangeDir(filename, ...) abort "{{{3
         endif
     endif
     if !empty(rootdir)
-        if autoproject#cd#SetCD(rootmode, rootdir)
+        let realrootdir = autoproject#cd#SetCD(rootmode, rootdir)
+        if !empty(realrootdir)
             Tlibtrace 'autoproject', rootdir, $HOME, dir, is_project
             if is_project
                 unlet! b:autoproject_name
                 if rootmode ==# '*reg*'
-                    call autoproject#list#RegisterDir(rootdir)
+                    call autoproject#list#RegisterDir(realrootdir)
                 else
-                    call autoproject#list#RegisterNameDir(rootmode, rootdir)
+                    call autoproject#list#RegisterNameDir(rootmode, realrootdir)
                 endif
                 if !exists('b:autoproject_name')
-                    let crootdir = tlib#file#Canonic(dir)
-                    let b:autoproject_name = get(g:autoproject#cd#name_map, crootdir, matchstr(crootdir, '[^\/]\+\ze[\/]\?$'))
+                    call s:SetBufVars(realrootdir)
                 endif
             endif
         endif
     endif
+endf
+
+
+function! s:SetBufVars(rootdir) abort "{{{3
+    let crootdir = tlib#file#Canonic(a:rootdir)
+    let b:autoproject_name = autoproject#cd#GetName(crootdir)
+    let b:autoproject_dir = crootdir
+endf
+
+
+function! autoproject#cd#GetName(crootdir) abort "{{{3
+    return get(g:autoproject#cd#name_map, a:crootdir, matchstr(a:crootdir, '[^\/]\+\ze[\/]\?$'))
 endf
 
 
@@ -193,15 +236,16 @@ function! autoproject#cd#SetCD(mode, dir) abort "{{{3
     if g:autoproject#cd#verbose
         echom 'autoproject:' cmd a:dir
     endif
-    Tlibtrace 'autoproject', cmd, a:dir, bufnr('%')
+    let dir = autoproject#cd#MaybeMap(a:dir)
+    Tlibtrace 'autoproject', cmd, a:dir, dir, bufnr('%')
     let w:autoproject_lcd = a:mode
-    exec cmd fnameescape(a:dir)
+    exec cmd fnameescape(dir)
     if !exists('b:autoproject_lcd')
         let b:autoproject_lcd = a:mode
-        call autoproject#projectrc#LoadBufferConfig(a:dir)
-        return 1
+        call autoproject#projectrc#LoadBufferConfig(dir)
+        return dir
     else
-        return 0
+        return ''
     endif
 endf
 
